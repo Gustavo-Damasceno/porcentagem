@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Avaliação Futurista</title>
+    <style>
+        /* Estilo Futurista */
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #00ffcc;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.7);
+            margin-bottom: 30px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(0, 255, 204, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        label {
+            font-size: 1.2rem;
+            color: #00ffcc;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #1c1c1c;
+            border: 2px solid #00ffcc;
+            border-radius: 10px;
+            color: #00ffcc;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #00ff99;
+            box-shadow: 0 0 10px rgba(0, 255, 153, 0.7);
+            outline: none;
+        }
+
+        button {
+            background: linear-gradient(145deg, #00ffcc, #00cc99);
+            color: #121212;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+            margin-top: 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: linear-gradient(145deg, #00cc99, #00ffcc);
+            transform: scale(1.05);
+        }
+
+        canvas {
+            margin-top: 30px;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #00ffcc;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Distribuição de Pessoas</h1>
+
+        <div class="input-group">
+            <label for="total">Total de Pessoas:</label>
+            <input type="number" id="total" placeholder="Insira o total de pessoas">
+        </div>
+
+        <div class="input-group">
+            <label for="otima">Porcentagem Ótima:</label>
+            <input type="number" id="otima" placeholder="Porcentagem para Ótima">
+        </div>
+
+        <div class="input-group">
+            <label for="media">Porcentagem Média:</label>
+            <input type="number" id="media" placeholder="Porcentagem para Média">
+        </div>
+
+        <button onclick="gerarGrafico()">Gerar Gráfico</button>
+
+        <canvas id="myChart" width="400" height="400"></canvas>
+
+        <div id="result"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function gerarGrafico() {
+            const total = parseFloat(document.getElementById('total').value);
+            const porcentagemOtima = parseFloat(document.getElementById('otima').value);
+            const porcentagemMedia = parseFloat(document.getElementById('media').value);
+            const porcentagemRuim = 100 - (porcentagemOtima + porcentagemMedia);
+
+            if (porcentagemOtima + porcentagemMedia > 100 || isNaN(total)) {
+                alert("As porcentagens combinadas não podem exceder 100 e você deve inserir valores válidos.");
+                return;
+            }
+
+            const totalOtima = (porcentagemOtima / 100) * total;
+            const totalMedia = (porcentagemMedia / 100) * total;
+            const totalRuim = (porcentagemRuim / 100) * total;
+
+            document.getElementById('result').innerHTML = `
+                Ótima: ${totalOtima.toFixed(0)} pessoas (${porcentagemOtima.toFixed(1)}%)<br>
+                Média: ${totalMedia.toFixed(0)} pessoas (${porcentagemMedia.toFixed(1)}%)<br>
+                Ruim: ${totalRuim.toFixed(0)} pessoas (${porcentagemRuim.toFixed(1)}%)<br>
+            `;
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Ótima', 'Média', 'Ruim'],
+                    datasets: [{
+                        data: [totalOtima, totalMedia, totalRuim],
+                        backgroundColor: ['#00ff99', '#ffcc00', '#ff3366'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#e0e0e0'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
